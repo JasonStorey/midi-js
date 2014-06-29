@@ -9,4 +9,4 @@ cp	./node_modules/mocha/mocha.css \
 	./node_modules/sinon-chai/lib/sinon-chai.js \
 	./test/resources/lib/
 
-browserify ./test/loader-spec.js > ./test/resources/test-bundle.js;
+browserify ./test/*-spec.js > ./test/resources/test-bundle.js;
