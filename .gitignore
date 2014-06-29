@@ -1,2 +1,4 @@
 node_modules
 .DS_Store
+test/resources/lib
+test/resources/test-bundle.js

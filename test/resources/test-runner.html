@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title> Tests </title>
+        <link rel="stylesheet" href="./lib/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <script src="./lib/mocha.js"></script>
+        <script src="./lib/chai.js"></script>
+        <script src="./lib/sinon.js"></script>
+        <script src="./lib/sinon-chai.js"></script>
+        <script>
+            mocha.ui('bdd'); 
+            mocha.reporter('html');
+            var expect = chai.expect;
+        </script>
+        <script src="./test-bundle.js"></script>
+        <script>
+            if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+            else { mocha.run(); }
+        </script>
+    </body>
+</html>
