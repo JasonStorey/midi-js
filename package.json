@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./bin/build-test-assets.sh; mocha-phantomjs -R dot ./test/resources/test-runner.html"
+    "test": "./bin/build-test-assets.sh; open ./test/resources/test-runner.html",
+    "phantom-test": "./bin/build-test-assets.sh; mocha-phantomjs -R dot ./test/resources/test-runner.html"
   },
   "author": "",
   "license": "ISC",
