@@ -1,12 +1,23 @@
-var Parser = require('../src/parser.js');
+var Parser = require('../src/parser.js'),
+	utils = require('./resources/test-utils');
 
 describe('Parser', function() {
-	var validMidiData,
-		invalidMidiData;
+	var validMidiBuffer,
+		invalidMidiBuffer,
+		midiDataStrings;
 
-	beforeEach(function(){
-		validMidiData = getBuffer('MThd');
-		invalidMidiData = getBuffer('invalid data');
+	beforeEach(function() {
+		var midiDataString;
+
+		midiDataStrings = {
+			header: {
+				chunkID: 'MThd'
+			}
+		};
+
+		midiDataString = midiDataStrings.header.chunkID;
+		validMidiBuffer = utils.str2ab(midiDataString);
+		invalidMidiBuffer = utils.str2ab('invalid data');
 	});
 
 	it('constructor should return an instance of Parser', function() {
@@ -23,24 +34,23 @@ describe('Parser', function() {
 
 	it('should throw error if array buffer does not contain MIDI data', function() {
 		var parser = new Parser();
-		expect(function(){ parser.parse(invalidMidiData) }).to.throw('invalid midi data');
+		expect(function(){ parser.parse(invalidMidiBuffer) }).to.throw('invalid midi data');
 	});
 
 	it('should cache valid midi buffer', function() {
 		var parser = new Parser();
 		
 		expect(parser.arrayBuffer).to.be.undefined;
-		parser.parse(validMidiData);
-		expect(parser.arrayBuffer).to.equal(validMidiData);
+		parser.parse(validMidiBuffer);
+		expect(parser.arrayBuffer).to.equal(validMidiBuffer);
+	});
+
+	it('should return a midi object with a header', function() {
+		var parser = new Parser(),
+			midiObject;
+		
+		midiObject = parser.parse(validMidiBuffer);
+		expect(utils.ab2str(midiObject.header.chunkID)).to.equal(midiDataStrings.header.chunkID);
+
 	});
 });
-
-function getBuffer(str) {
-	var buf = new ArrayBuffer(str.length * 2),
-		bufView = new Uint16Array(buf);
-
-	for (var i = 0, strLen = str.length; i < strLen; i++) {
-		bufView[i] = str.charCodeAt(i);
-	}
-	return buf;
-}
