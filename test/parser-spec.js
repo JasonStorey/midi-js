@@ -51,6 +51,5 @@ describe('Parser', function() {
 		
 		midiObject = parser.parse(validMidiBuffer);
 		expect(utils.ab2str(midiObject.header.chunkID)).to.equal(midiDataStrings.header.chunkID);
-
 	});
 });

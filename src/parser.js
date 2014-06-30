@@ -9,7 +9,7 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 	
 	midiObject = {
 		header: {
-			chunkID: this.extract(0, 8)
+			chunkID: this.extract(0, 4)
 		}
 	};
 
@@ -17,15 +17,15 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 };
 
 Parser.prototype.extract = function extract(start, end) {
-	return new Uint16Array(this.arrayBuffer.slice(start, end));
+	return new Uint8Array(this.arrayBuffer.slice(start, end));
 };
 
 Parser.prototype.validateArrayBuffer = function validateArrayBuffer(arrayBuffer) {
 	if(!arrayBuffer.byteLength) {
 		throw new Error('not a valid array buffer');
 	}
-	var midiChunkId = new Uint16Array(arrayBuffer.slice(0, 8));
-	if(String.fromCharCode.apply(null, new Uint16Array(midiChunkId)) !== 'MThd') {
+	var midiChunkId = new Uint8Array(arrayBuffer.slice(0, 4));
+	if(String.fromCharCode.apply(null, new Uint8Array(midiChunkId)) !== 'MThd') {
 		throw new Error('invalid midi data');
 	}
 };
