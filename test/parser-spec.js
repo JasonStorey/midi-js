@@ -3,21 +3,11 @@ var Parser = require('../src/parser.js'),
 
 describe('Parser', function() {
 	var validMidiBuffer,
-		invalidMidiBuffer,
-		midiDataStrings;
+		invalidMidiBuffer;
 
 	beforeEach(function() {
-		var midiDataString;
-
-		midiDataStrings = {
-			header: {
-				chunkID: 'MThd'
-			}
-		};
-
-		midiDataString = midiDataStrings.header.chunkID;
-		validMidiBuffer = utils.str2ab(midiDataString);
-		invalidMidiBuffer = utils.str2ab('invalid data');
+		validMidiBuffer = new Uint8Array([77,84,104,100,0,0,0,6]).buffer;
+		invalidMidiBuffer = new Uint8Array([88,85,104,100]).buffer;
 	});
 
 	it('constructor should return an instance of Parser', function() {
@@ -47,9 +37,12 @@ describe('Parser', function() {
 
 	it('should return a midi object with a header', function() {
 		var parser = new Parser(),
+			expectedChunkID = new Uint8Array([77,84,104,100]),
+			expectedChunSize = new Uint8Array([0,0,0,6]),
 			midiObject;
 		
 		midiObject = parser.parse(validMidiBuffer);
-		expect(utils.ab2str(midiObject.header.chunkID)).to.equal(midiDataStrings.header.chunkID);
+		expect(midiObject.header.chunkID).to.deep.equal(expectedChunkID);
+		expect(midiObject.header.chunkSize).to.deep.equal(expectedChunSize);
 	});
 });

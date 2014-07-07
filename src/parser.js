@@ -9,7 +9,8 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 	
 	midiObject = {
 		header: {
-			chunkID: this.extract(0, 4)
+			chunkID: this.extract(0, 4),
+			chunkSize: this.extract(4, 8)		
 		}
 	};
 
