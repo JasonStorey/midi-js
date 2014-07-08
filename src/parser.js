@@ -29,10 +29,10 @@ Parser.prototype.getTimeDivisionObject = function getTimeDivisionObject() {
 		};
 
 	if(topBit === 0) {
-		timeDivisionObject.tpb = timeDivisionBytes & 0x7FFF;
+		timeDivisionObject.ticksPerBeat = timeDivisionBytes & 0x7FFF;
 	} else {
-		timeDivisionObject.fps = ~ this.dataView.getInt8(12, false) + 1;
-		timeDivisionObject.tpf = timeDivisionBytes & 0x00FF;
+		timeDivisionObject.framesPerSecond = ~ this.dataView.getInt8(12, false) + 1;
+		timeDivisionObject.ticksPerFrame = timeDivisionBytes & 0x00FF;
 	}
 
 	return timeDivisionObject;

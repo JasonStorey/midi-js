@@ -73,11 +73,11 @@ describe('Parser', function() {
 			expect(midiObject.header.numberOfTracks).to.equal(expectedNumberOfTracks);
 		});
 
-		it('containing timeDivision with tpb', function() {
+		it('containing timeDivision with ticksPerBeat', function() {
 			var parser = new Parser(),
 				expectedTimeDivision = {
 					type: 0,
-					tpb: 120
+					ticksPerBeat: 120
 				},
 				midiObject;
 			
@@ -85,12 +85,12 @@ describe('Parser', function() {
 			expect(midiObject.header.timeDivision).to.deep.equal(expectedTimeDivision);
 		});
 
-		it('containing timeDivision with fps and tpf', function() {
+		it('containing timeDivision with framesPerSecond and ticksPerFrame', function() {
 			var parser = new Parser(),
 				expectedTimeDivision = {
 					type: 1,
-					fps: 24,
-					tpf: 120
+					framesPerSecond: 24,
+					ticksPerFrame: 120
 				},
 				midiObject;
 			
