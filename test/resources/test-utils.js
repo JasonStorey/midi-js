@@ -13,9 +13,24 @@ function testUtils() {
 		return buf;
 	}
 
+	function smokeTest(url) {
+		var Loader = require('../../src/loader.js'),
+			Parser = require('../../src/parser.js');
+
+		var loader = new Loader();
+
+		loader.load(url, function(data) {
+			var parser = new Parser();
+			console.log(parser.parse(data));
+		}, function(err) {
+			console.log(err);
+		});
+	}
+
 	return {
 		ab2str: ab2str,
-		str2ab: str2ab
+		str2ab: str2ab,
+		smokeTest: smokeTest
 	};
 }
 
