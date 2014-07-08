@@ -6,7 +6,7 @@ describe('Parser', function() {
 		invalidMidiBuffer;
 
 	beforeEach(function() {
-		validMidiBuffer = new Uint8Array([77,84,104,100,0,0,0,6]).buffer;
+		validMidiBuffer = new Uint8Array([77,84,104,100,0,0,0,6,0,0,0,1]).buffer;
 		invalidMidiBuffer = new Uint8Array([88,85,104,100]).buffer;
 	});
 
@@ -35,14 +35,41 @@ describe('Parser', function() {
 		expect(parser.arrayBuffer).to.equal(validMidiBuffer);
 	});
 
-	it('should return a midi object with a header', function() {
-		var parser = new Parser(),
-			expectedChunkID = new Uint8Array([77,84,104,100]),
-			expectedChunSize = new Uint8Array([0,0,0,6]),
-			midiObject;
-		
-		midiObject = parser.parse(validMidiBuffer);
-		expect(midiObject.header.chunkID).to.deep.equal(expectedChunkID);
-		expect(midiObject.header.chunkSize).to.deep.equal(expectedChunSize);
+	describe('returns a midi object with a header', function() {
+		it('containing a chunkID', function() {
+			var parser = new Parser(),
+				expectedChunkID = 'MThd',
+				midiObject;
+			
+			midiObject = parser.parse(validMidiBuffer);
+			expect(midiObject.header.chunkID).to.equal(expectedChunkID);
+		});
+
+		it('containing a chunkSize', function() {
+			var parser = new Parser(),
+				expectedChunkSize = 6,
+				midiObject;
+			
+			midiObject = parser.parse(validMidiBuffer);
+			expect(midiObject.header.chunkSize).to.deep.equal(expectedChunkSize);
+		});
+
+		it('containing a formatType', function() {
+			var parser = new Parser(),
+				expectedFormatType = 0,
+				midiObject;
+			
+			midiObject = parser.parse(validMidiBuffer);
+			expect(midiObject.header.formatType).to.equal(expectedFormatType);
+		});
+
+		it('containing numberOfTracks', function() {
+			var parser = new Parser(),
+				expectedNumberOfTracks = 1,
+				midiObject;
+			
+			midiObject = parser.parse(validMidiBuffer);
+			expect(midiObject.header.numberOfTracks).to.equal(expectedNumberOfTracks);
+		});
 	});
 });
