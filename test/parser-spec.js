@@ -1,5 +1,4 @@
-var Parser = require('../src/parser.js'),
-	utils = require('./resources/test-utils');
+var Parser = require('../src/parser.js');
 
 describe('Parser', function() {
 	var typeZeroMidiBufferWithTicks,
