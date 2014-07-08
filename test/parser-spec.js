@@ -2,11 +2,12 @@ var Parser = require('../src/parser.js'),
 	utils = require('./resources/test-utils');
 
 describe('Parser', function() {
-	var validMidiBuffer,
+	var typeZeroMidiBufferWithTicks,
 		invalidMidiBuffer;
 
 	beforeEach(function() {
-		validMidiBuffer = new Uint8Array([77,84,104,100,0,0,0,6,0,0,0,1]).buffer;
+		typeZeroMidiBufferWithTicks = new Uint8Array([77,84,104,100,0,0,0,6,0,0,0,1,0,120]).buffer;
+		typeZeroMidiBufferWithFrames = new Uint8Array([77,84,104,100,0,0,0,6,0,0,0,1,232,120]).buffer;
 		invalidMidiBuffer = new Uint8Array([88,85,104,100]).buffer;
 	});
 
@@ -31,8 +32,8 @@ describe('Parser', function() {
 		var parser = new Parser();
 		
 		expect(parser.arrayBuffer).to.be.undefined;
-		parser.parse(validMidiBuffer);
-		expect(parser.arrayBuffer).to.equal(validMidiBuffer);
+		parser.parse(typeZeroMidiBufferWithTicks);
+		expect(parser.arrayBuffer).to.equal(typeZeroMidiBufferWithTicks);
 	});
 
 	describe('returns a midi object with a header', function() {
@@ -41,7 +42,7 @@ describe('Parser', function() {
 				expectedChunkID = 'MThd',
 				midiObject;
 			
-			midiObject = parser.parse(validMidiBuffer);
+			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.chunkID).to.equal(expectedChunkID);
 		});
 
@@ -50,7 +51,7 @@ describe('Parser', function() {
 				expectedChunkSize = 6,
 				midiObject;
 			
-			midiObject = parser.parse(validMidiBuffer);
+			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.chunkSize).to.deep.equal(expectedChunkSize);
 		});
 
@@ -59,7 +60,7 @@ describe('Parser', function() {
 				expectedFormatType = 0,
 				midiObject;
 			
-			midiObject = parser.parse(validMidiBuffer);
+			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.formatType).to.equal(expectedFormatType);
 		});
 
@@ -68,8 +69,33 @@ describe('Parser', function() {
 				expectedNumberOfTracks = 1,
 				midiObject;
 			
-			midiObject = parser.parse(validMidiBuffer);
+			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.numberOfTracks).to.equal(expectedNumberOfTracks);
+		});
+
+		it('containing timeDivision with tpb', function() {
+			var parser = new Parser(),
+				expectedTimeDivision = {
+					type: 0,
+					tpb: 120
+				},
+				midiObject;
+			
+			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+			expect(midiObject.header.timeDivision).to.deep.equal(expectedTimeDivision);
+		});
+
+		it('containing timeDivision with fps and tpf', function() {
+			var parser = new Parser(),
+				expectedTimeDivision = {
+					type: 1,
+					fps: 24,
+					tpf: 120
+				},
+				midiObject;
+			
+			midiObject = parser.parse(typeZeroMidiBufferWithFrames);
+			expect(midiObject.header.timeDivision).to.deep.equal(expectedTimeDivision);
 		});
 	});
 });

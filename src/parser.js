@@ -13,11 +13,29 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 			chunkID: String.fromCharCode.apply(null, this.extractUint8Array(0, 4)),
 			chunkSize: this.getUint32(4),
 			formatType: this.getUint16(8),
-			numberOfTracks: this.getUint16(10)
+			numberOfTracks: this.getUint16(10),
+			timeDivision: this.getTimeDivisionObject()
 		}
 	};
 
 	return midiObject;
+};
+
+Parser.prototype.getTimeDivisionObject = function getTimeDivisionObject() {
+	var timeDivisionBytes = this.getUint16(12),
+		topBit = (timeDivisionBytes & 0x8000) > 0 ? 1 : 0,
+		timeDivisionObject = {
+			type: topBit
+		};
+
+	if(topBit === 0) {
+		timeDivisionObject.tpb = timeDivisionBytes & 0x7FFF;
+	} else {
+		timeDivisionObject.fps = ~ this.dataView.getInt8(12, false) + 1;
+		timeDivisionObject.tpf = timeDivisionBytes & 0x00FF;
+	}
+
+	return timeDivisionObject;
 };
 
 Parser.prototype.extractUint8Array = function extractUint8Array(start, end) {
