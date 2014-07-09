@@ -126,12 +126,12 @@ describe('Parser', function() {
 				expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
 			});
 
-			it('contain chunk data', function() {
-				var expectedChunkData = new Uint8Array([0x01,0x03,0x03,0x07]),
+			it('contain chunk events', function() {
+				var expectedChunkEvents = new Uint8Array([0x01,0x03,0x03,0x07]),
 					midiObject;
 
 				midiObject = parser.parse(midiBufferWithOneTrackChunk);
-				expect(midiObject.tracks[0].data).to.deep.equal(expectedChunkData);
+				expect(midiObject.tracks[0].events).to.deep.equal(expectedChunkEvents);
 			});	
 		})
 	});

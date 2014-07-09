@@ -13,7 +13,7 @@ function testBuffers() {
 			chunkID: [0x4d,0x54,0x72,0x6b],
 			proprietaryChunkID: [0x4d,0x54,0x6a,0x73],
 			chunkSize: [0x00,0x00,0x00,0x04],
-			data: [0x01,0x03, 0x03,0x07]
+			events: [0x01,0x03, 0x03,0x07]
 		}
 	};
 
@@ -42,7 +42,7 @@ function testBuffers() {
 			buffer = buffer.concat(
 				midi.track.proprietaryChunkID,
 				midi.track.chunkSize,
-				midi.track.data
+				midi.track.events
 			);		
 		};
 
@@ -50,7 +50,7 @@ function testBuffers() {
 			buffer = buffer.concat(
 				midi.track.chunkID,
 				midi.track.chunkSize,
-				midi.track.data
+				midi.track.events
 			);		
 		};
 

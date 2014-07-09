@@ -47,7 +47,7 @@ Parser.prototype.getChunk = function getChunk(offset) {
 		chunkID: String.fromCharCode.apply(null, this.extractUint8Array(offset, offset + 4)),
 		chunkSize: this.getUint32(offset + 4)
 	};
-	chunk.data = this.extractUint8Array(offset + 8, offset + 8 + chunk.chunkSize);
+	chunk.events = this.extractUint8Array(offset + 8, offset + 8 + chunk.chunkSize);
 	return chunk;
 };
 
