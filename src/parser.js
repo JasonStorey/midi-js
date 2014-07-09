@@ -25,11 +25,18 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 Parser.prototype.getTracks = function getTracks() {
 	var tracksArray = [],
 		numberOfTracks = this.getUint16(10),
-		track;
+		startByte = 14,
+		headerSize = 8,
+		chunk;
 	
 	for(var i = 0; i < numberOfTracks; i++) {
-		track = this.getChunk(14);
-		tracksArray.push(track);
+		chunk = this.getChunk(startByte);
+		if(chunk.chunkID === 'MTrk') {
+			tracksArray.push(chunk);
+		} else {
+			console.log('Unrecognised chunk : ', chunk);
+		}
+		startByte += (headerSize + chunk.chunkSize);
 	}
 
 	return tracksArray;

@@ -9,8 +9,8 @@ describe('Parser', function() {
 
 	beforeEach(function() {
 		parser = new Parser();
-		typeZeroMidiBufferWithTicks  = testBuffers.createMidiBuffer({type:0, ticks: true});
-		typeZeroMidiBufferWithFrames = testBuffers.createMidiBuffer({type:0, frames: true});
+		typeZeroMidiBufferWithTicks  = testBuffers.createMidiBuffer({type: 0, tracks: 1, ticks: true});
+		typeZeroMidiBufferWithFrames = testBuffers.createMidiBuffer({type:0, tracks: 1, frames: true});
 		invalidMidiBuffer = new Uint8Array([88,85,104,100]).buffer;
 	});
 
@@ -90,29 +90,49 @@ describe('Parser', function() {
 		});
 	});
 
-	describe('returns a midi object with track chunk', function() {
-		it('containing a chunkID', function() {
+	describe('returns a midi object with tracks array', function() {
+		var midiBufferWithOneTrackChunk,
+			midiBufferWith2TracksAnd2ProprietaryChunks;
+
+		beforeEach(function() {
+			midiBufferWithOneTrackChunk = testBuffers.createMidiBuffer({type:0, tracks: 1, ticks: true});
+			midiBufferWith2TracksAnd2ProprietaryChunks = testBuffers.createMidiBuffer({type:1, tracks: 2, ticks: true, propietaryChunks: 2});
+		});
+
+		it('containing valid tracks only', function() {
 			var expectedChunkID = 'MTrk',
 				midiObject;
 
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+			midiObject = parser.parse(midiBufferWith2TracksAnd2ProprietaryChunks);
+			expect(midiObject.tracks.length).to.equal(2);
 			expect(midiObject.tracks[0].chunkID).to.equal(expectedChunkID);
 		});
 
-		it('containing a chunkSize', function() {
-			var expectedChunkSize = 4,
-				midiObject;
+		describe('each track should', function() {
+			it('contain a valid chunkID', function() {
+				var expectedChunkID = 'MTrk',
+					midiObject;
 
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
-			expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
-		});
+				midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				expect(midiObject.tracks.length).to.equal(1);
+				expect(midiObject.tracks[0].chunkID).to.equal(expectedChunkID);
+			});
 
-		it('containing chunk data', function() {
-			var expectedChunkData = new Uint8Array([0x01,0x03,0x03,0x07]),
-				midiObject;
+			it('contain a chunkSize', function() {
+				var expectedChunkSize = 4,
+					midiObject;
 
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
-			expect(midiObject.tracks[0].data).to.deep.equal(expectedChunkData);
-		});
+				midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
+			});
+
+			it('contain chunk data', function() {
+				var expectedChunkData = new Uint8Array([0x01,0x03,0x03,0x07]),
+					midiObject;
+
+				midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				expect(midiObject.tracks[0].data).to.deep.equal(expectedChunkData);
+			});	
+		})
 	});
 });
