@@ -15,10 +15,33 @@ Parser.prototype.parse = function parse(arrayBuffer) {
 			formatType: this.getUint16(8),
 			numberOfTracks: this.getUint16(10),
 			timeDivision: this.getTimeDivisionObject()
-		}
+		},
+		tracks: this.getTracks()
 	};
 
 	return midiObject;
+};
+
+Parser.prototype.getTracks = function getTracks() {
+	var tracksArray = [],
+		numberOfTracks = this.getUint16(10),
+		track;
+	
+	for(var i = 0; i < numberOfTracks; i++) {
+		track = this.getChunk(14);
+		tracksArray.push(track);
+	}
+
+	return tracksArray;
+};
+
+Parser.prototype.getChunk = function getChunk(offset) {
+	var chunk = {
+		chunkID: String.fromCharCode.apply(null, this.extractUint8Array(offset, offset + 4)),
+		chunkSize: this.getUint32(offset + 4)
+	};
+	chunk.data = this.extractUint8Array(offset + 8, offset + 8 + chunk.chunkSize);
+	return chunk;
 };
 
 Parser.prototype.getTimeDivisionObject = function getTimeDivisionObject() {
