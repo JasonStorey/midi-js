@@ -47,8 +47,17 @@ Parser.prototype.getChunk = function getChunk(offset) {
 		chunkID: String.fromCharCode.apply(null, this.extractUint8Array(offset, offset + 4)),
 		chunkSize: this.getUint32(offset + 4)
 	};
-	chunk.events = this.extractUint8Array(offset + 8, offset + 8 + chunk.chunkSize);
+	// this.extractUint8Array(offset + 8, offset + 8 + chunk.chunkSize);
+	chunk.events = this.getEvents(offset + 8);
 	return chunk;
+};
+
+Parser.prototype.getEvents = function getEvents(offset) {
+	var events = [{
+		delta: this.dataView.getUint8(offset)
+	}];
+
+	return events;
 };
 
 Parser.prototype.getTimeDivisionObject = function getTimeDivisionObject() {

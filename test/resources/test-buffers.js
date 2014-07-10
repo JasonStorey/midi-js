@@ -12,10 +12,17 @@ function testBuffers() {
 		track: {
 			chunkID: [0x4d,0x54,0x72,0x6b],
 			proprietaryChunkID: [0x4d,0x54,0x6a,0x73],
-			chunkSize: [0x00,0x00,0x00,0x04],
-			events: [0x01,0x03, 0x03,0x07]
+			chunkSize: [0x00,0x00,0x00,0x0c],
+			events: {
+				delta: [0x00],
+				trackName: [0xff,0x03,0x08,0x75,0x6e,0x74,0x69,0x74,0x6c,0x65,0x64]
+			}
 		}
 	};
+
+	function getChunkSizeArray() {
+
+	}
 
 	function createNumberOfTracksArray(options) {
 		var n = (options.tracks + (options.propietaryChunks || 0)) || 1;
@@ -42,7 +49,8 @@ function testBuffers() {
 			buffer = buffer.concat(
 				midi.track.proprietaryChunkID,
 				midi.track.chunkSize,
-				midi.track.events
+				midi.track.events.delta,
+				midi.track.events.trackName
 			);		
 		};
 
@@ -50,10 +58,10 @@ function testBuffers() {
 			buffer = buffer.concat(
 				midi.track.chunkID,
 				midi.track.chunkSize,
-				midi.track.events
+				midi.track.events.delta,
+				midi.track.events.trackName
 			);		
 		};
-
 
 		return new Uint8Array(buffer).buffer;
 	}

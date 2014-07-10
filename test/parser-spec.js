@@ -108,7 +108,7 @@ describe('Parser', function() {
 			expect(midiObject.tracks[0].chunkID).to.equal(expectedChunkID);
 		});
 
-		describe('each track should', function() {
+		describe('Tracks', function() {
 			it('contain a valid chunkID', function() {
 				var expectedChunkID = 'MTrk',
 					midiObject;
@@ -119,7 +119,7 @@ describe('Parser', function() {
 			});
 
 			it('contain a chunkSize', function() {
-				var expectedChunkSize = 4,
+				var expectedChunkSize = 12,
 					midiObject;
 
 				midiObject = parser.parse(midiBufferWithOneTrackChunk);
@@ -127,12 +127,33 @@ describe('Parser', function() {
 			});
 
 			it('contain chunk events', function() {
-				var expectedChunkEvents = new Uint8Array([0x01,0x03,0x03,0x07]),
-					midiObject;
+				var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				expect(midiObject.tracks[0].events).to.be.defined;
+				expect(midiObject.tracks[0].events.length).to.equal(1);
+			});
 
-				midiObject = parser.parse(midiBufferWithOneTrackChunk);
-				expect(midiObject.tracks[0].events).to.deep.equal(expectedChunkEvents);
-			});	
+			describe('Events', function() {
+				it('contain delta time', function() {
+					var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+					expect(midiObject.tracks[0].events[0].delta).to.equal(0);
+				});
+
+				// it('contain status byte', function() {
+				// 	var expectedStatus = 0xff,
+				// 		midiObject
+
+				// 	midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				// 	expect(midiObject.tracks[0].events[0].status).to.equal(expectedStatus);
+				// });
+
+				// it('contain type byte', function() {
+				// 	var expectedStatus = 0x03,
+				// 		midiObject
+
+				// 	midiObject = parser.parse(midiBufferWithOneTrackChunk);
+				// 	expect(midiObject.tracks[0].events[0].type).to.equal(expectedStatus);
+				// });
+			});
 		})
 	});
 });
