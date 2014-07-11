@@ -133,26 +133,45 @@ describe('Parser', function() {
 			});
 
 			describe('Events', function() {
-				it('contain delta time', function() {
-					var midiObject = parser.parse(midiBufferWithOneTrackChunk);
-					expect(midiObject.tracks[0].events[0].delta).to.equal(0);
+
+				describe('Title events', function() {
+					it('contain delta time', function() {
+						var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(midiObject.tracks[0].events[0].delta).to.equal(0);
+					});
+
+					it('contain status byte', function() {
+						var expectedStatus = 0xff,
+							midiObject;
+
+						midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(midiObject.tracks[0].events[0].status).to.equal(expectedStatus);
+					});
+
+					it('contain type byte', function() {
+						var expectedType = 0x03,
+							midiObject;
+
+						midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(midiObject.tracks[0].events[0].type).to.equal(expectedType);
+					});
+
+					it('contain size byte', function() {
+						var expectedSize = 0x08,
+							midiObject;
+
+						midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(midiObject.tracks[0].events[0].size).to.equal(expectedSize);
+					});
+
+					it('contain title data', function() {
+						var expectedTitle = 'untitled',
+							midiObject;
+
+						midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data)).to.equal(expectedTitle);
+					});
 				});
-
-				// it('contain status byte', function() {
-				// 	var expectedStatus = 0xff,
-				// 		midiObject
-
-				// 	midiObject = parser.parse(midiBufferWithOneTrackChunk);
-				// 	expect(midiObject.tracks[0].events[0].status).to.equal(expectedStatus);
-				// });
-
-				// it('contain type byte', function() {
-				// 	var expectedStatus = 0x03,
-				// 		midiObject
-
-				// 	midiObject = parser.parse(midiBufferWithOneTrackChunk);
-				// 	expect(midiObject.tracks[0].events[0].type).to.equal(expectedStatus);
-				// });
 			});
 		})
 	});
