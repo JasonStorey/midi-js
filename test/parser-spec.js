@@ -36,33 +36,29 @@ describe('Parser', function() {
 	describe('returns a midi object with a header', function() {
 		it('containing a chunkID', function() {
 			var expectedChunkID = 'MThd',
-				midiObject;
+				midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.chunkID).to.equal(expectedChunkID);
 		});
 
 		it('containing a chunkSize', function() {
 			var expectedChunkSize = 6,
-				midiObject;
+				midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.chunkSize).to.deep.equal(expectedChunkSize);
 		});
 
 		it('containing a formatType', function() {
 			var expectedFormatType = 0,
-				midiObject;
+				midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
 			expect(midiObject.header.formatType).to.equal(expectedFormatType);
 		});
 
 		it('containing numberOfTracks', function() {
 			var expectedNumberOfTracks = 1,
-				midiObject;
-			
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+				midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+
 			expect(midiObject.header.numberOfTracks).to.equal(expectedNumberOfTracks);
 		});
 
@@ -71,9 +67,8 @@ describe('Parser', function() {
 					type: 0,
 					ticksPerBeat: 120
 				},
-				midiObject;
-			
-			midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+				midiObject = parser.parse(typeZeroMidiBufferWithTicks);
+
 			expect(midiObject.header.timeDivision).to.deep.equal(expectedTimeDivision);
 		});
 
@@ -83,9 +78,8 @@ describe('Parser', function() {
 					framesPerSecond: 24,
 					ticksPerFrame: 120
 				},
-				midiObject;
-			
-			midiObject = parser.parse(typeZeroMidiBufferWithFrames);
+				midiObject = parser.parse(typeZeroMidiBufferWithFrames);
+
 			expect(midiObject.header.timeDivision).to.deep.equal(expectedTimeDivision);
 		});
 	});
@@ -101,9 +95,8 @@ describe('Parser', function() {
 
 		it('containing valid tracks only', function() {
 			var expectedChunkID = 'MTrk',
-				midiObject;
+				midiObject = parser.parse(midiBufferWith2TracksAnd2ProprietaryChunks);
 
-			midiObject = parser.parse(midiBufferWith2TracksAnd2ProprietaryChunks);
 			expect(midiObject.tracks.length).to.equal(2);
 			expect(midiObject.tracks[0].chunkID).to.equal(expectedChunkID);
 		});
@@ -111,64 +104,59 @@ describe('Parser', function() {
 		describe('Tracks', function() {
 			it('contain a valid chunkID', function() {
 				var expectedChunkID = 'MTrk',
-					midiObject;
+					midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-				midiObject = parser.parse(midiBufferWithOneTrackChunk);
 				expect(midiObject.tracks.length).to.equal(1);
 				expect(midiObject.tracks[0].chunkID).to.equal(expectedChunkID);
 			});
 
 			it('contain a chunkSize', function() {
 				var expectedChunkSize = 12,
-					midiObject;
+					midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-				midiObject = parser.parse(midiBufferWithOneTrackChunk);
 				expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
 			});
 
 			it('contain chunk events', function() {
 				var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
 				expect(midiObject.tracks[0].events).to.be.defined;
 				expect(midiObject.tracks[0].events.length).to.equal(1);
 			});
 
 			describe('Events', function() {
-
 				describe('Title events', function() {
 					it('contain delta time', function() {
 						var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						
 						expect(midiObject.tracks[0].events[0].delta).to.equal(0);
 					});
 
 					it('contain status byte', function() {
 						var expectedStatus = 0xff,
-							midiObject;
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						midiObject = parser.parse(midiBufferWithOneTrackChunk);
 						expect(midiObject.tracks[0].events[0].status).to.equal(expectedStatus);
 					});
 
 					it('contain type byte', function() {
 						var expectedType = 0x03,
-							midiObject;
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						midiObject = parser.parse(midiBufferWithOneTrackChunk);
 						expect(midiObject.tracks[0].events[0].type).to.equal(expectedType);
 					});
 
 					it('contain size byte', function() {
 						var expectedSize = 0x08,
-							midiObject;
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						midiObject = parser.parse(midiBufferWithOneTrackChunk);
 						expect(midiObject.tracks[0].events[0].size).to.equal(expectedSize);
 					});
 
 					it('contain title data', function() {
 						var expectedTitle = 'untitled',
-							midiObject;
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						midiObject = parser.parse(midiBufferWithOneTrackChunk);
 						expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data)).to.equal(expectedTitle);
 					});
 				});
