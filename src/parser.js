@@ -47,18 +47,25 @@ Parser.prototype.getChunk = function getChunk(offset) {
 		chunkID: String.fromCharCode.apply(null, this.extractUint8Array(offset, offset + 4)),
 		chunkSize: this.getUint32(offset + 4)
 	};
-	chunk.events = this.getEvents(offset + 8);
+	chunk.events = this.getEvents(offset + 8, offset + chunk.chunkSize);
 	return chunk;
 };
 
-Parser.prototype.getEvents = function getEvents(offset) {
-	var events = [{
-		delta: this.dataView.getUint8(offset),
-		status: this.dataView.getUint8(offset + 1),
-		type: this.dataView.getUint8(offset + 2),
-		size: this.dataView.getUint8(offset + 3),
-		data: this.extractUint8Array(offset + 4, offset + 4 + this.dataView.getUint8(offset + 3))
-	}];
+Parser.prototype.getEvents = function getEvents(start, end) {
+	var current = start,
+		events = [];
+
+	while(current < end) {
+		var event = {
+			delta: this.dataView.getUint8(current),
+			status: this.dataView.getUint8(current + 1),
+			type: this.dataView.getUint8(current + 2),
+			size: this.dataView.getUint8(current + 3),
+			data: this.extractUint8Array(current + 4, current + 4 + this.dataView.getUint8(current + 3))
+		};
+		events.push(event);
+		current = current + 4 + event.size;
+	}
 
 	return events;
 };

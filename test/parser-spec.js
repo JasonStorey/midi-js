@@ -111,7 +111,7 @@ describe('Parser', function() {
 			});
 
 			it('contain a chunkSize', function() {
-				var expectedChunkSize = 12,
+				var expectedChunkSize = 40,
 					midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
 				expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
@@ -121,14 +121,14 @@ describe('Parser', function() {
 				var midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
 				expect(midiObject.tracks[0].events).to.be.defined;
-				expect(midiObject.tracks[0].events.length).to.equal(1);
+				expect(midiObject.tracks[0].events.length).to.equal(2);
 			});
 
 			describe('Events', function() {
-				describe('Title events', function() {
+				describe('Track name events', function() {
 					it('contain delta time', function() {
 						var midiObject = parser.parse(midiBufferWithOneTrackChunk);
-						
+
 						expect(midiObject.tracks[0].events[0].delta).to.equal(0);
 					});
 
@@ -153,14 +153,50 @@ describe('Parser', function() {
 						expect(midiObject.tracks[0].events[0].size).to.equal(expectedSize);
 					});
 
-					it('contain title data', function() {
-						var expectedTitle = 'untitled',
+					it('contain data', function() {
+						var expectedTrackName = 'untitled',
 							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data)).to.equal(expectedTitle);
+						expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data)).to.equal(expectedTrackName);
+					});
+				});
+
+				describe('Copyright events', function() {
+					it('contain delta time', function() {
+						var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[1].delta).to.equal(0);
+					});
+
+					it('contain status byte', function() {
+						var expectedStatus = 0xff,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[1].status).to.equal(expectedStatus);
+					});
+
+					it('contain type byte', function() {
+						var expectedType = 0x02,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[1].type).to.equal(expectedType);
+					});
+
+					it('contain size byte', function() {
+						var expectedSize = 0x18,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[1].size).to.equal(expectedSize);
+					});
+
+					it('contain data', function() {
+						var expectedCopyright = 'Copyright © 1998 by dave',
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[1].data)).to.equal(expectedCopyright);
 					});
 				});
 			});
-		})
+		});
 	});
 });
