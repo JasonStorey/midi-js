@@ -64,11 +64,15 @@ Parser.prototype.getEvents = function getEvents(start, end) {
 		if(event.status === 0xFF) {
 			event.type = this.dataView.getUint8(current + 2);
 			event.size = this.dataView.getUint8(current + 3);
-			event.data = this.extractUint8Array(current + 4, current + 4 + event.size)
+			event.data1 = this.extractUint8Array(current + 4, current + 4 + event.size)
 			current = current + 4 + event.size;
-		} else {
-			event.data = this.dataView.getUint8(current + 2);
+		} else if(event.status >= 0xc0 && event.status <= 0xdf) {
+			event.data1 = this.dataView.getUint8(current + 2);
 			current = current + 3;
+		} else {
+			event.data1 = this.dataView.getUint8(current + 2);
+			event.data2 = this.dataView.getUint8(current + 3);
+			current = current + 4;
 		}
 
 		events.push(event);

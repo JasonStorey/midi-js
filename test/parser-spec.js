@@ -111,7 +111,7 @@ describe('Parser', function() {
 			});
 
 			it('contain a chunkSize', function() {
-				var expectedChunkSize = 43,
+				var expectedChunkSize = 47,
 					midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
 				expect(midiObject.tracks[0].chunkSize).to.equal(expectedChunkSize);
@@ -121,7 +121,7 @@ describe('Parser', function() {
 				var midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
 				expect(midiObject.tracks[0].events).to.be.defined;
-				expect(midiObject.tracks[0].events.length).to.equal(3);
+				expect(midiObject.tracks[0].events.length).to.equal(4);
 			});
 
 			describe('Events', function() {
@@ -154,11 +154,11 @@ describe('Parser', function() {
 							expect(midiObject.tracks[0].events[0].size).to.equal(expectedSize);
 						});
 
-						it('contains data', function() {
+						it('contains data1 byte', function() {
 							var expectedTrackName = 'untitled',
 								midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-							expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data)).to.equal(expectedTrackName);
+							expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[0].data1)).to.equal(expectedTrackName);
 						});
 					});
 
@@ -190,11 +190,11 @@ describe('Parser', function() {
 							expect(midiObject.tracks[0].events[1].size).to.equal(expectedSize);
 						});
 
-						it('contains data', function() {
+						it('contains data1 byte', function() {
 							var expectedCopyright = 'Copyright © 1998 by dave',
 								midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-							expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[1].data)).to.equal(expectedCopyright);
+							expect(String.fromCharCode.apply(null, midiObject.tracks[0].events[1].data1)).to.equal(expectedCopyright);
 						});
 					});
 				});
@@ -212,11 +212,39 @@ describe('Parser', function() {
 						expect(midiObject.tracks[0].events[2].status).to.equal(expectedStatus);
 					});
 
-					it('contains data', function() {
+					it('contains data1 byte', function() {
 						var expectedData = 0x04,
 							midiObject = parser.parse(midiBufferWithOneTrackChunk);
 
-						expect(midiObject.tracks[0].events[2].data).to.equal(expectedData);
+						expect(midiObject.tracks[0].events[2].data1).to.equal(expectedData);
+					});
+				});
+
+				describe('Note on event', function() {
+					it('contains delta time', function() {
+						var midiObject = parser.parse(midiBufferWithOneTrackChunk);
+						expect(midiObject.tracks[0].events[3].delta).to.equal(0);
+					});
+					
+					it('contains status byte', function() {
+						var expectedStatus = 0x90,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[3].status).to.equal(expectedStatus);
+					});
+
+					it('contains data1 byte', function() {
+						var expectedData = 0x29,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[3].data1).to.equal(expectedData);
+					});
+
+					it('contains data2 byte', function() {
+						var expectedData = 0x64,
+							midiObject = parser.parse(midiBufferWithOneTrackChunk);
+
+						expect(midiObject.tracks[0].events[3].data2).to.equal(expectedData);
 					});
 				});
 			});
