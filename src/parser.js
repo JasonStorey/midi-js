@@ -1,3 +1,5 @@
+var midiEvents = require('./midi-events.js');
+
 var Parser = function Parser() {
 };
 
@@ -47,38 +49,10 @@ Parser.prototype.getChunk = function getChunk(offset) {
 		chunkID: String.fromCharCode.apply(null, this.extractUint8Array(offset, offset + 4)),
 		chunkSize: this.getUint32(offset + 4)
 	};
-	chunk.events = this.getEvents(offset + 8, offset + 8 + chunk.chunkSize);
+	
+	chunk.events = midiEvents.parse(this.arrayBuffer.slice(offset + 8, offset + 8 + chunk.chunkSize));
+
 	return chunk;
-};
-
-Parser.prototype.getEvents = function getEvents(start, end) {
-	var current = start,
-		events = [];
-
-	while(current < end) {
-		var event = {
-			delta: this.dataView.getUint8(current),
-			status: this.dataView.getUint8(current + 1)
-		};
-		
-		if(event.status === 0xFF) {
-			event.type = this.dataView.getUint8(current + 2);
-			event.size = this.dataView.getUint8(current + 3);
-			event.data1 = this.extractUint8Array(current + 4, current + 4 + event.size)
-			current = current + 4 + event.size;
-		} else if(event.status >= 0xc0 && event.status <= 0xdf) {
-			event.data1 = this.dataView.getUint8(current + 2);
-			current = current + 3;
-		} else {
-			event.data1 = this.dataView.getUint8(current + 2);
-			event.data2 = this.dataView.getUint8(current + 3);
-			current = current + 4;
-		}
-
-		events.push(event);
-	}
-
-	return events;
 };
 
 Parser.prototype.getTimeDivisionObject = function getTimeDivisionObject() {

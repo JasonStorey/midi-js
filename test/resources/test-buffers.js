@@ -72,8 +72,26 @@ function testBuffers() {
 		return new Uint8Array(buffer).buffer;
 	}
 
+	function createEventsBuffer() {
+		var buffer = [];
+
+		buffer = buffer.concat(
+			midi.track.events.delta,
+			midi.track.events.trackName,
+			midi.track.events.delta,
+			midi.track.events.copyright,
+			midi.track.events.delta,
+			midi.track.events.programChange,
+			midi.track.events.delta,
+			midi.track.events.noteOn			
+		);
+
+		return new Uint8Array(buffer).buffer;
+	}
+
 	return {
-		createMidiBuffer: createMidiBuffer
+		createMidiBuffer: createMidiBuffer,
+		createEventsBuffer: createEventsBuffer
 	};
 }
 
